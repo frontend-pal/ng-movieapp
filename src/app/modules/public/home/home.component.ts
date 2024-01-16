@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MovieService } from 'src/app/core/services/movie.service';
+import { MoviedbService } from 'src/app/core/services/moviedb.service';
 
 @Component({
   selector: 'app-home',
@@ -9,15 +9,22 @@ import { MovieService } from 'src/app/core/services/movie.service';
 export class HomeComponent implements OnInit {
 
   constructor(
-    private movieService: MovieService
+    private moviedbService: MoviedbService
   ) { }
 
   ngOnInit(): void {
-    this.getMovies();
+    this.getSeries();
+    this.getGenres();
   }
 
-  getMovies() {
-    this.movieService.getMovies().subscribe(res => {
+  getSeries() {
+    this.moviedbService.getSeries().subscribe(res => {
+      console.log(res);
+    })
+  }
+
+  getGenres() {
+    this.moviedbService.getGenres().subscribe(res => {
       console.log(res);
     })
   }
