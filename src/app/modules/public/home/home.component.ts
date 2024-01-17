@@ -1,15 +1,15 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { Genre } from 'src/app/core/models/Genre';
-import { Product } from 'src/app/core/models/Product';
+import { ProductType } from 'src/app/core/models/ProductType';
 import { TabName } from 'src/app/core/models/TabName';
 import { Movie, TVShow, tmdbResponse } from 'src/app/core/models/result';
+import { MoviedbService } from 'src/app/core/services/moviedb.service';
 import { environment } from 'src/environments/environment';
 import { operations } from '../../../utils/operations';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { Router } from '@angular/router';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
-import { MoviedbService } from 'src/app/core/services/moviedb.service';
 
 interface MovieView extends Omit<Movie, 'genre_ids'> {
   genre_ids: Genre[]
@@ -94,7 +94,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     if (this.searchQuery !== '') {
       this.searchProduct();
     } else {
-      console.log(this.selectedTab);
       if (this.selectedTab === 'series') {
         this.getTVShows();
       } else {
@@ -186,15 +185,15 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
   }
 
-  getTabName(genre: Product) {
+  getTabName(genre: ProductType) {
     return this.tabNames.find(x => x.genre_name === genre)?.tab_name || '';
   }
 
-  getGenreNameFromObj(tabName: string): Product {
-    return this.tabNames.find(x => x.tab_name === tabName)?.genre_name as Product || '';
+  getGenreNameFromObj(tabName: string): ProductType {
+    return this.tabNames.find(x => x.tab_name === tabName)?.genre_name as ProductType || '';
   }
 
-  getGenreName(id: number, type: Product) {
+  getGenreName(id: number, type: ProductType) {
     let genreObj;
 
     if (type === 'movie') {
@@ -211,7 +210,9 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   goToDetail(id: number) {
-    this.router.navigate(['detail/' + id]);
+    const tabName = this.getGenreNameFromObj(this.selectedTab);
+
+    this.router.navigate(['detail/'+ tabName  + '/' + id]);
   }
 
   changePage(event: PageEvent) {
