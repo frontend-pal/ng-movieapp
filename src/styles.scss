@@ -97,16 +97,7 @@ body p {
   }
 }
 
-// (100vh + header + footer) 48 + 46 = 94px
 .main-body-content {
-  // background: rgb(66, 66, 70);
-  // background: linear-gradient(90deg, #424246 0%, #27334e 48%, #172133 100%);
-  // background-image: linear-gradient(
-  //   90deg,
-  //   #424246 0%,
-  //   #27334e 50%,
-  //   #172133 100%
-  // );
   background: rgb(142, 205, 161);
   background: linear-gradient(
     90deg,
@@ -116,7 +107,7 @@ body p {
     rgba(39, 186, 210, 1) 75%,
     rgba(1, 179, 229, 1) 100%
   );
-  padding: 1rem 0;
+  // padding: 1rem 0;
   min-height: calc(100vh - 94px);
 }
 

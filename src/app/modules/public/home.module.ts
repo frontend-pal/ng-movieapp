@@ -1,32 +1,28 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
-import { MatIconModule } from '@angular/material/icon';
-import { MatTabsModule } from '@angular/material/tabs';
 import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
-import { MoviedbService } from 'src/app/core/services/moviedb.service';
+import { SharedModule } from 'src/app/shared/shared.module';
+import { DetailComponent } from './detail/detail.component';
 
 const routes: Routes = [
-  { path: '', component: HomeComponent },
-  { path: '', redirectTo: '', pathMatch: 'full' },
+  { path: 'home', component: HomeComponent },
+  { path: 'detail/:id', component: DetailComponent },
+  { path: 'detail', component: DetailComponent },
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
+  { path: '**', redirectTo: 'home', pathMatch: 'full' }
 ];
 
 @NgModule({
   declarations: [
-    HomeComponent
+    HomeComponent,
+    DetailComponent
   ],
   imports: [
     CommonModule,
     RouterModule.forChild(routes),
-    MatCardModule,
-    MatButtonModule,
-    MatIconModule,
-    MatTabsModule
+    SharedModule
   ],
-  providers: [
-    MoviedbService
-  ]
+  providers: [ ]
 })
 export class HomeModule { }

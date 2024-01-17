@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component } from '@angular/core';
 import { MoviedbService } from 'src/app/core/services/moviedb.service';
 
 

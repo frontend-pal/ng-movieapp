@@ -1,46 +1,42 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/internal/Observable';
+import { Subject } from 'rxjs/internal/Subject';
 import { environment } from 'src/environments/environment';
-import { Product } from '../models/Product';
+import { sessionPersistence } from '../../utils/session-persistence';
 import { Genre } from '../models/Genre';
-import { sessionPersistence } from 'src/app/utils/session-persistence';
+import { Product } from '../models/Product';
 import { tmdbResponse } from '../models/result';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class MoviedbService {
+  private _searchString = new Subject<string>();
 
   constructor(
     private http: HttpClient
-  ) {
+  ) { }
+
+  public get searchString() {
+    return this._searchString;
   }
 
-  // getMovies(lang = 'es-MX'): Observable<Response> {
-  //   let params = new HttpParams().set('language', lang);
+  setSearch(searchText: string) {
+    this._searchString.next(searchText);
+  }
 
-  //   return this.http.get<Response>(environment.apiUrl + 'trending/movie/day', { params });
-  // }
-
-  // getSeries(genre = '', lang = 'es-MX'): Observable<Response> {
-  //   let params = new HttpParams().set('language', lang);
-
-  //   params = params.append('sort_by', 'popularity.desc');
-
-  //   if (!!genre) {
-  //     params = params.append('with_genres', genre);
-  //   }
-
-  //   return this.http.get<Response>(environment.apiUrl + 'discover/tv', { params });
-  // }
-
-  getTrending(type: Product = 'movie', lang = 'es-MX'): Observable<tmdbResponse> {
-    let params = new HttpParams().set('language', lang);
-    
+  getTrending(type: Product = 'movie', page = 1, genre = '', lang = 'es-MX'): Observable<tmdbResponse> {
+    const objParams = {
+      language: lang,
+      page: page,
+      sort_by: 'popularity.desc',
+      with_genres: genre
+    };
+    const params = new HttpParams({ fromObject: objParams });
 
     return this.http.get<tmdbResponse>(`${environment.apiUrl}discover/${type}`, { params });
   }
 
-  getGenres(type: Product = 'movie', lang = 'es-MX'): Observable<Genre[]> {
+  getGenres(type: Product = 'movie', lang = 'es'): Observable<Genre[]> {
     let response: Genre[] = [];
 
     return new Observable<Genre[] | []>(obs => {
@@ -59,5 +55,17 @@ export class MoviedbService {
         obs.complete();
       }
     });
+  }
+
+  searchProduct(query: string, type: Product = 'movie', page: number = 1, lang = 'es'): Observable<tmdbResponse> {
+    const objParams = {
+      query: query,
+      page: page,
+      language: lang,
+      include_adult: 'false'
+    };
+    const params = new HttpParams({ fromObject: objParams });
+
+    return this.http.get<tmdbResponse>(`${environment.apiUrl}search/${type}`, { params });
   }
 }

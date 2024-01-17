@@ -4,9 +4,26 @@
   justify-content: center;
 }
 
+::ng-deep.mat-mdc-tab-body-wrapper {
+  margin: 0 auto;
+  max-width: 1200px;
+  width: 100%;
+}
+
+::ng-deep.mat-mdc-paginator-outer-container {
+  background-color: #010a11;
+  color: #fff;
+
+  .mdc-icon-button {
+    svg {
+      fill: #fff;
+    }
+  }
+}
+
 .mat-mdc-card {
   width: 240px;
-  padding: 0.75rem;
+  padding: 1rem;
   margin: 1rem;
   border-radius: 3rem;
   background-color: #0d0c0c;
@@ -26,6 +43,7 @@
   }
 
   .genre-names {
+    min-height: 1rem;
     text-align: center;
   }
 
