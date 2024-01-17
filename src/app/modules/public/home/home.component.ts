@@ -3,13 +3,14 @@ import { MatTabChangeEvent } from '@angular/material/tabs';
 import { Genre } from 'src/app/core/models/Genre';
 import { ProductType } from 'src/app/core/models/ProductType';
 import { TabName } from 'src/app/core/models/TabName';
-import { Movie, TVShow, tmdbResponse } from 'src/app/core/models/result';
+import { Movie, TVShow, tmdbResponse } from 'src/app/core/models/Result';
 import { MoviedbService } from 'src/app/core/services/moviedb.service';
 import { environment } from 'src/environments/environment';
 import { operations } from '../../../utils/operations';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { Router } from '@angular/router';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { Filter } from 'src/app/core/models/Filter';
 
 interface MovieView extends Omit<Movie, 'genre_ids'> {
   genre_ids: Genre[]
@@ -40,6 +41,11 @@ export class HomeComponent implements OnInit, OnDestroy {
   currentPage = 1;
   totalPages = 0;
   totalItems = 0;
+  filter: Filter = {
+    genre: '',
+    sort_by: 'popularity.desc'
+  };
+  changingTab = false;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   tabNames: TabName[] = [
@@ -88,6 +94,16 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.paginator.firstPage();
       this.updateData();
     });
+
+    this.moviedbService.filter.subscribe(filter => {
+      this.filter = filter;
+      
+      if (!this.changingTab) {
+        this.currentPage = 1;
+        this.paginator.firstPage();
+        this.updateData();
+      }
+    });
   }
 
   updateData() {
@@ -95,9 +111,9 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.searchProduct();
     } else {
       if (this.selectedTab === 'series') {
-        this.getTVShows();
+        this.getProduct('tv');
       } else {
-        this.getMovies();
+        this.getProduct('movie');
       }
     }
   }
@@ -106,20 +122,14 @@ export class HomeComponent implements OnInit, OnDestroy {
     const name = this.searchQuery;
     let product = this.getGenreNameFromObj(this.selectedTab);
 
-    this.moviedbService.searchProduct(name, product, this.currentPage).subscribe(res => {
+    this.moviedbService.searchProduct(name, product, this.currentPage, this.filter.genre, this.filter.sort_by).subscribe(res => {
       this.makeViewObj(res);
       this.updateTab = true;
     })
   }
 
-  getMovies() {
-    this.moviedbService.getTrending('movie', this.currentPage).subscribe(res => {
-      this.makeViewObj(res);
-    });
-  }
-
-  getTVShows() {
-    this.moviedbService.getTrending('tv', this.currentPage).subscribe(res => {
+  getProduct(product: ProductType) {
+    this.moviedbService.getTrending(product, this.currentPage, this.filter.genre, this.filter.sort_by).subscribe(res => {
       this.makeViewObj(res);
     });
   }
@@ -157,20 +167,22 @@ export class HomeComponent implements OnInit, OnDestroy {
   changeTab(tabEvent: MatTabChangeEvent) {
     const tab = tabEvent.tab;
     const tabName = tab.textLabel.toLowerCase();
-    
+
     this.selectedTab = tabName;
+    this.changingTab = true; // evita reload al cambiar los generos
+    this.moviedbService.setSelectedTab(this.selectedTab);
+    this.changingTab = false; // evita reload al cambiar los generos
     this.currentPage = 1;
     this.paginator.firstPage();
     // this.pageIndex = 0;
 
-    console.log(this.updateTab);
     if (this.updateTab) {
       if (tabName === 'series') {
         console.log(tabName);
         if (this.searchQuery !== '') {
           this.searchProduct();
         } else {
-          this.getTVShows();
+          this.getProduct('tv');
         }
         this.updateTab = false;
       } else {
@@ -178,7 +190,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         if (this.searchQuery !== '') {
           this.searchProduct();
         } else {
-          this.getMovies();
+          this.getProduct('movie');
         }
         this.updateTab = false;
       }
@@ -212,7 +224,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   goToDetail(id: number) {
     const tabName = this.getGenreNameFromObj(this.selectedTab);
 
-    this.router.navigate(['detail/'+ tabName  + '/' + id]);
+    this.router.navigate(['detail/' + tabName + '/' + id]);
   }
 
   changePage(event: PageEvent) {

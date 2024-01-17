@@ -66,5 +66,8 @@
 
     </mat-tab>
 </mat-tab-group>
+<div class="sort-container">
+    <app-filter-box></app-filter-box>
+</div>
 <mat-paginator [length]="totalItems" [pageSize]="20" aria-label="Select page" (page)="changePage($event)">
 </mat-paginator>
