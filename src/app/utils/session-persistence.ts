@@ -24,21 +24,5 @@ export const sessionPersistence = {
     },
     setRawString: (keyName: string, rawString: string) => {
         sessionStorage.setItem(keyName, rawString);
-    },
-    update: (keyName: string, value: Object) => {
-        const valueKeys = Object.keys(value);
-        const valueString = sessionStorage.getItem(keyName);
-        let valueObject = !!valueString && JSON.parse(valueString);
-
-        if (!valueObject) {
-            valueObject = {};
-        }
-
-        if (valueKeys) {
-            for (let key of valueKeys) {
-                valueObject[key] = value[key as keyof typeof value];
-            }
-        }
-        sessionStorage.setItem(keyName, JSON.stringify(valueObject));
     }
 };

@@ -30,9 +30,7 @@ export class DetailComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    console.log("entre aqui");
     this.route.paramMap.subscribe((params: ParamMap) => {
-      console.log(params);
       this.productId = params.get('id') || '';
       this.productType = params.get('type') as ProductType || null;
 
@@ -94,4 +92,3 @@ export class DetailComponent implements OnInit {
     this.router.navigate(['/home']);
   }
 }
-

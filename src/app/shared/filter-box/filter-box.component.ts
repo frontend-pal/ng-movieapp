@@ -61,10 +61,12 @@ export class FilterBoxComponent implements OnInit {
   ngOnInit(): void {
     this.initData();
     this.filterForm.valueChanges.subscribe(value => {
+      console.log(value);
       this.sendSearch(value)
     });
 
     this.moviedbService.selectedTab.subscribe(tabName => {
+      console.log(tabName);
       this.selectedTab = tabName;
       this.filterForm.get('genre')?.patchValue('');
       this.updateGenres();

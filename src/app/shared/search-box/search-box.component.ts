@@ -18,8 +18,8 @@ export class SearchBoxComponent {
 
     if (value && value !== '') {
       this.sendSearch(value);
-    } else if (value === '') {
-      this.sendSearch(value);
+    } else {
+      this.sendSearch('');
     }
   }
 
